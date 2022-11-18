@@ -1,0 +1,18 @@
+extends layouts/login-layout.pug
+
+block content 
+  .loginContainer 
+    h1 Register 
+    form#registerForm(method="post")
+      p.errorMessage #{errorMessage}
+      input(type="text", name="firstName", placeholder="First name", required="" value=firstName) 
+      input(type="text", name="lastName", placeholder="Last name", required="" value=lastName) 
+      input(type="text", name="userName", placeholder="User name", required="" value=userName) 
+      input(type="email", name="email", placeholder="Email", required="" value=email) 
+      input#password(type="password", name="password", placeholder="Password", required="")
+      input#passwordConf(type="password", name="passwordConf", placeholder="Confirm password", required="")
+      input(type="submit" value="Submit") 
+    a(href="/login") Already have an account? Login here.
+
+  script(src='/js/register.js')
+  

@@ -1,0 +1,40 @@
+include ../mixins/mixins 
+
+<!DOCTYPE html>
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport" content="width=device-width, initial-scale=1.0")
+    link(rel='stylesheet', href='/css/bootstrap/bootstrap.min.css')
+    link.css(rel="stylesheet", href="/css/main.css")
+    title #{pageTitle} 
+  body
+    .wrapper 
+      .row
+        nav.col-2
+          a.blue(href="/")
+            i.fas.fa-dove
+          a(href="/")
+            i.fa-solid.fa-house
+          a(href="/search")
+            i.fas.fa-search
+          a(href="/notifications")
+            i.fas.fa-bell
+          a(href="/messages")
+            i.fas.fa-envelope
+          a(href="/profile")
+            i.fas.fa-user
+          a(href="/logout")
+            i.fas.fa-sign-out-alt
+        .mainSectionContainer.col-10.col-md-8.col-lg-6 
+          .titleContainer
+            h1 #{pageTitle}
+          block content
+          
+        .d-none.d-md-block.col-md-2.col-lg-4
+          span third column
+    
+    script(src='/fontawesome-6.2.1/js/all.min.js')
+    script(src='/js/jquery-3.6.1.min.js')
+    script(src='/js/popper-1.16.0.min.js')
+    script(src='/js/bootstrap_js/bootstrap.min.js')
