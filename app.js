@@ -30,18 +30,19 @@ app.set("views", "views");
 app.get("/", middleware.requireLogin, (req, res, next) => {
   const payload = {
     pageTitle: "Home",
-    userLoggedIn: req.session.user
+    userLoggedIn: req.session.user,
+    userLoggedInJs: JSON.stringify(req.session.user)
   };
 
-  res.status(200).render("home", payload);
+  res.status(200)
+    .set("Content-Security-Policy", "default-src *; style-src 'self' http://* 'unsafe-inline'; script-src 'self' http://* 'unsafe-inline' 'unsafe-eval'")
+    .render("home", payload);
 });
 app.use("/login", loginRoute);
 app.use("/register", registerRoute);
 app.use("/logout", logoutRoute);
 
 app.use("/api/posts", postsApiRoute);
-
-
 
 const port = process.env.PORT || 5000;
 app.listen(port, () => {

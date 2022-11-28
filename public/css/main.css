@@ -1,6 +1,7 @@
 :root {
   --blue: #1FA2F1;
   --blueLight: #9BD1F9;
+  --red: rgb(226, 34, 94);
   --lightGrey: rgb(230, 236, 240);
   --buttonHoverBG: #d4edff;
   --greyText: rgb(101, 119, 134);
@@ -58,6 +59,11 @@ button {
   background-color: transparent;
   border: none;
   color: var(--greyButtonText);
+}
+
+button i,
+button span {
+  pointer-events: none;
 }
 
 .mainSectionContainer {
@@ -180,4 +186,8 @@ button {
   background-color: #d4edff;
   color: var(--blue);
   border-radius: 50%;
+}
+
+.postButtonContainer.red button.active {
+  color: var(--red);
 }
