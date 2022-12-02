@@ -72,6 +72,33 @@ $("#replyModal").on("hidden.bs.modal", function() {
   modalIsVisible = false;
 });
 
+/** DELETE MODAL */
+$("#deletePostModal").on("show.bs.modal", function(event) {
+  event.stopPropagation();
+  const button = $(event.relatedTarget);
+  const postId = getPostIdFromElement(button);
+  $("#deletePostButton").data("id", postId);
+
+  modalIsVisible = true;
+});
+
+/** DELETE MODAL SUBMIT BUTTON */
+$("#deletePostButton").click(function (event) {
+  const postId = $(event.target).data("id");
+
+  $.ajax({
+    url: `/api/posts/${postId}`,
+    type: "DELETE",
+    success: function(data, status, xhr) {
+      if (xhr.status !== 202) {
+        alert("Could not delete post!");
+        return;
+      }
+      location.reload();
+    }
+  });
+});
+
 /**LIKE BUTTON */
 $(document).on('click', '.likeButton', function(event) {
   event.stopPropagation();
@@ -85,7 +112,7 @@ $(document).on('click', '.likeButton', function(event) {
     type: "PUT",
     success: function(postData) {
       button.find("span").text(postData.likes.length || "");
-      console.log(postData.likes.length)
+
       if(postData.likes.includes(userLoggedIn._id)) {
         button.addClass("active");
       } else {
@@ -118,13 +145,12 @@ $(document).on('click', '.retweetButton', function(event) {
   });
 });
 
-
+/**TO POST PAGE */
 $(document).on('click', '.post', function(event) {
   const element = $(event.target);
   const postId = getPostIdFromElement(element);
   // const modalIsVisible = $("#replyModal").is("visible");
  
-
   if (postId !== undefined && !element.is("button") && !modalIsVisible) {
     setTimeout(function() {
       if(!modalIsVisible) window.location.href = `/posts/${postId}`;

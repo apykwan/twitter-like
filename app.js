@@ -1,7 +1,7 @@
 const express = require('express');
 const helmet = require('helmet');
-require('dotenv').config();
 const session = require('express-session');
+require('dotenv').config();
 
 require('./database');
 const middleware = require('./middleware');
@@ -9,6 +9,7 @@ const loginRoute = require('./routes/loginRoutes');
 const registerRoute = require('./routes/registerRoutes');
 const logoutRoute = require('./routes/logout');
 const postsApiRoutes = require('./routes/api/posts');
+const profileRoutes = require('./routes/profileRoutes');
 const postRoutes = require('./routes/postRoutes');
 
 const app = express();
@@ -43,6 +44,7 @@ app.use("/login", loginRoute);
 app.use("/register", registerRoute);
 app.use("/logout", logoutRoute);
 app.use("/posts", middleware.requireLogin, postRoutes);
+app.use("/profile", middleware.requireLogin, profileRoutes);
 app.use("/api/posts", postsApiRoutes);
 
 const port = process.env.PORT || 5000;

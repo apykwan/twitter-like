@@ -59,7 +59,7 @@ function createPostHtml (postData, largeFont = false) {
   let buttons = "";
   if (postData.postedBy._id == userLoggedIn._id) {
     buttons = `
-      <button data-id="${postData._id}" data-toggle="#deletePostModal">
+      <button data-id="${postData._id}" data-toggle="modal" data-target="#deletePostModal">
         <i class="fas fa-times"></i>
       </button>
     `;
@@ -67,9 +67,9 @@ function createPostHtml (postData, largeFont = false) {
 
   return `
     <div class="post ${largeFontClass}" data-id=${postData._id}>
-    <div class="postActionContainer">
-      ${retweetText}
-    </div>
+      <div class="postActionContainer">
+        ${retweetText}
+      </div>
       <div class="mainContentContainer">
         <div class="userImageContainer">
           <img src="${postedBy.profilePic}" alt="${postedBy.userName}'s profile picture"/>
