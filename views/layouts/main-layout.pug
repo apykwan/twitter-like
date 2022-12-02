@@ -10,7 +10,7 @@ html(lang="en")
     title #{pageTitle} 
   body
     script.
-      var userLoggedIn = !{userLoggedInJs};
+      let userLoggedIn = !{userLoggedInJs};
     .wrapper 
       .row
         nav.col-2
@@ -42,5 +42,5 @@ html(lang="en")
     script(src='/js/bootstrap_js/bootstrap.min.js')
 
     block scripts
-
+    script(src="/js/utils.js")
     script(src="/js/common.js")

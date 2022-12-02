@@ -5,17 +5,29 @@ const User = require('../../schemas/User');
 
 const router = express.Router();
 
-router.get("/", (req, res, next) => {
-  Post.find()
-    .populate("postedBy")
-    .sort({ "createdAt": -1 })
-    .then(results => {
-      res.status(200).send(results)
-    })
-    .catch(error => {
-      console.log(error)
-      res.sendStatus(400);
-    });
+/** GET All Posts */
+router.get("/", async (req, res, next) => {
+  const results = await getPosts();
+  res.status(200).send(results); 
+});
+
+/** GET Single Post */
+router.get("/:id", async (req, res, next) => {
+  const postId = req.params.id;
+  let postData = await getPosts({ _id: postId });
+  postData = postData[0];
+
+  const results = {
+    postData
+  };
+
+  if (postData.reply !== undefined) {
+    results.replyto = postData.replyTo;
+  }
+
+  results.replies = await getPosts({ replyTo: postId })
+
+  res.status(200).send(results);
 });
 
 router.post("/", async (req, res, next) => {
@@ -29,6 +41,10 @@ router.post("/", async (req, res, next) => {
     postedBy: req.session.user
   }
 
+  if (req.body.replyTo) {
+    postData.replyTo = req.body.replyTo;
+  }
+
   Post.create(postData)
     .then(async newPost => {
       newPost = await User.populate(newPost, { path: "postedBy" });
@@ -38,7 +54,7 @@ router.post("/", async (req, res, next) => {
     .catch(error => res.sendStatus(400));
 });
 
-// Like button
+/**PUT like button */
 router.put("/:id/like", async (req, res, next) => {
   if (!req.session.user) return;
   const postId = req.params.id;
@@ -69,13 +85,11 @@ router.put("/:id/like", async (req, res, next) => {
   }
 });
 
-// Retweet button
+/**PUT Retweet button */
 router.post("/:id/retweet", async (req, res, next) => {
   if (!req.session.user) return;
   const postId = req.params.id;
   const userId = req.session.user._id;
-
-  console.log('post: ', postId, 'user: ', userId);
 
   try {
     // Try and delete retreet
@@ -115,5 +129,19 @@ router.post("/:id/retweet", async (req, res, next) => {
   }
 });
 
+async function getPosts(filter = {}) {
+  let results = await Post.find(filter)
+    .populate("postedBy")
+    .populate("retweetData")
+    .populate("replyTo")
+    .sort({ "createdAt": -1 })
+    .catch(error => {
+      console.log(error)
+      res.sendStatus(400);
+    });
+
+  results = await User.populate(results, { path: "replyTo.postedBy"});
+  return await User.populate(results, { path: "retweetData.postedBy"});
+}
 
 module.exports = router;

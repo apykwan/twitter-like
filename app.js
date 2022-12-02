@@ -8,7 +8,8 @@ const middleware = require('./middleware');
 const loginRoute = require('./routes/loginRoutes');
 const registerRoute = require('./routes/registerRoutes');
 const logoutRoute = require('./routes/logout');
-const postsApiRoute = require('./routes/api/posts');
+const postsApiRoutes = require('./routes/api/posts');
+const postRoutes = require('./routes/postRoutes');
 
 const app = express();
 app.use(express.json());
@@ -41,8 +42,8 @@ app.get("/", middleware.requireLogin, (req, res, next) => {
 app.use("/login", loginRoute);
 app.use("/register", registerRoute);
 app.use("/logout", logoutRoute);
-
-app.use("/api/posts", postsApiRoute);
+app.use("/posts", middleware.requireLogin, postRoutes);
+app.use("/api/posts", postsApiRoutes);
 
 const port = process.env.PORT || 5000;
 app.listen(port, () => {
