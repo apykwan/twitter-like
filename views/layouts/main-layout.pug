@@ -24,7 +24,7 @@ html(lang="en")
             i.fas.fa-bell
           a(href="/messages")
             i.fas.fa-envelope
-          a(href="/profile")
+          a(href=`/profile/${userLoggedIn && userLoggedIn.userName}`)
             i.fas.fa-user
           a(href="/logout")
             i.fas.fa-sign-out-alt

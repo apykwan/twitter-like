@@ -157,3 +157,8 @@ $(document).on('click', '.post', function(event) {
     }, 100);
   };
 });
+
+/**STOP BUBBLING WHEN CLICKING ON THE NAMES */
+$(".displayName, #retweetedBy").click(function(event) {
+  event.stopPropagation();
+});
