@@ -158,7 +158,29 @@ $(document).on('click', '.post', function(event) {
   };
 });
 
+/**FOLLOW BUTTON */
+$(document).on("click", ".followButton", function(event) {
+  const button = $(event.target);
+  const userId = button.data().user;
+  
+  $.ajax({
+    url: `/api/users/${userId}/follow`,
+    type: "PUT",
+    success: function(postData) {
+      console.log(postData);
+      // button.find("span").text(postData.retweetUsers.length || "");
+
+      // if(postData.retweetUsers.includes(userLoggedIn._id)) {
+      //   button.addClass("active");
+      // } else {
+      //   button.removeClass("active");
+      // }
+    }
+  });
+});
+
 /**STOP BUBBLING WHEN CLICKING ON THE NAMES */
-$(".displayName, #retweetedBy").click(function(event) {
+$(".displayName, .username, #retweetedBy").click(function(event) {
   event.stopPropagation();
 });
+

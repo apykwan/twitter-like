@@ -9,6 +9,7 @@ const loginRoute = require('./routes/loginRoutes');
 const registerRoute = require('./routes/registerRoutes');
 const logoutRoute = require('./routes/logout');
 const postsApiRoutes = require('./routes/api/posts');
+const usersApiRoutes = require('./routes/api/users');
 const profileRoutes = require('./routes/profileRoutes');
 const postRoutes = require('./routes/postRoutes');
 
@@ -46,6 +47,7 @@ app.use("/logout", logoutRoute);
 app.use("/posts", middleware.requireLogin, postRoutes);
 app.use("/profile", middleware.requireLogin, profileRoutes);
 app.use("/api/posts", postsApiRoutes);
+app.use("/api/users", usersApiRoutes);
 
 const port = process.env.PORT || 5000;
 const server = app.listen(port, () => {
