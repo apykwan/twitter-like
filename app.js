@@ -2,7 +2,6 @@ const express = require('express');
 const helmet = require('helmet');
 const session = require('express-session');
 const cors = require('cors');
-const { expressCspHeader, INLINE, NONE, SELF } = require('express-csp-header');
 require('dotenv').config();
 
 require('./database');
@@ -14,6 +13,7 @@ const postsApiRoutes = require('./routes/api/posts');
 const usersApiRoutes = require('./routes/api/users');
 const profileRoutes = require('./routes/profileRoutes');
 const postRoutes = require('./routes/postRoutes');
+const uploadRoutes = require('./routes/uploadRoutes');
 
 const app = express();
 app.use(express.json());
@@ -30,13 +30,6 @@ app.use(helmet());
 
 app.set("view engine", "pug");
 app.set("views", "views");
-
-// app.use(expressCspHeader({ 
-//   directives: {
-//     'default-src': [SELF],
-//     'img-src': ['self', 'data:', 'unsafe-inline', 'blob:', 'ws://localhost:*/', 'http://localhost:*/'],
-//   }
-// }));
 
 // API Routes\
 app.get("/", middleware.requireLogin, (req, res, next) => {
@@ -55,8 +48,10 @@ app.use("/register", registerRoute);
 app.use("/logout", logoutRoute);
 app.use("/posts", middleware.requireLogin, postRoutes);
 app.use("/profile", middleware.requireLogin, profileRoutes);
+app.use("/uploads", uploadRoutes);
 app.use("/api/posts", postsApiRoutes);
 app.use("/api/users", usersApiRoutes);
+
 
 const port = process.env.PORT || 5000;
 const server = app.listen(port, () => {

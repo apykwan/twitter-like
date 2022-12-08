@@ -1,9 +1,15 @@
 const express = require('express');
+const multer = require('multer');
+const fs = require('fs');
+const path = require('path');
 
 const Post = require('../../schemas/Post');
 const User = require('../../schemas/User');
 
 const router = express.Router();
+const upload = multer({
+  dest: "uploads/"
+})
 
 router.put("/:userId/follow", async (req, res, next) => {
   const userId = req.params.userId;
@@ -66,6 +72,60 @@ router.get("/:userId/followers", async (req, res, next) => {
     console.log(error);
     res.sendStatus(400);
   }
+});
+
+router.post("/profilePicture", upload.single("croppedImage"), async (req, res, next) => {
+  if (!req.file) {
+    console.log("No file uploaded with ajax request");
+    return res.sendStatus(400);
+  }
+
+  const filePath = `/uploads/images/${req.file.filename}.png`;
+  const tempPath = req.file.path;
+  const targetPath = path.join(__dirname, `../../${filePath}`);
+
+  fs.rename(tempPath, targetPath, async (error) => {
+    if (error !== null) {
+      console.log(error);
+      return res.sendStatus(400);
+    }
+    try {
+      req.session.user = await User.findByIdAndUpdate(req.session.user._id, {
+        coverPhoto: filePath
+      }, { new: true })
+
+      res.sendStatus(204);
+    } catch (error) {
+      res.sendStatus(400);
+    }
+  });
+});
+
+router.post("/coverPhoto", upload.single("croppedImage"), async (req, res, next) => {
+  if (!req.file) {
+    console.log("No file uploaded with ajax request");
+    return res.sendStatus(400);
+  }
+
+  const filePath = `/uploads/images/${req.file.filename}.png`;
+  const tempPath = req.file.path;
+  const targetPath = path.join(__dirname, `../../${filePath}`);
+
+  fs.rename(tempPath, targetPath, async (error) => {
+    if (error !== null) {
+      console.log(error);
+      return res.sendStatus(400);
+    }
+    try {
+      req.session.user = await User.findByIdAndUpdate(req.session.user._id, {
+        coverPhoto: filePath
+      }, { new: true })
+
+      res.sendStatus(204);
+    } catch (error) {
+      res.sendStatus(400);
+    }
+  });
 });
 
 module.exports = router;
