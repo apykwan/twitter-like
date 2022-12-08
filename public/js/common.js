@@ -49,6 +49,7 @@ $("#submitPostButton, #submitReplyButton").click(function (event) {
       button.prop("disabled", true);
     }
   });
+  modalIsVisible = false;
 });
 
 /** REPLY MODAL SUBMIT BUTTON*/
@@ -97,6 +98,17 @@ $("#deletePostButton").click(function (event) {
       location.reload();
     }
   });
+});
+
+/**UPLOAD PHOTO */
+$('#filePhoto').change(function() {
+  if(this.files && this.files[0]) {
+    const reader = new FileReader();
+    reader.onload = function(event) {
+      $("#imagePreview").attr("src", event.target.result)
+    };
+    reader.readAsDataURL(this.files[0]);
+  }
 });
 
 /**LIKE BUTTON */
@@ -166,21 +178,34 @@ $(document).on("click", ".followButton", function(event) {
   $.ajax({
     url: `/api/users/${userId}/follow`,
     type: "PUT",
-    success: function(postData) {
-      console.log(postData);
-      // button.find("span").text(postData.retweetUsers.length || "");
+    success: function(data, status, xhr) {
+      if (xhr.status === 404) return;
 
-      // if(postData.retweetUsers.includes(userLoggedIn._id)) {
-      //   button.addClass("active");
-      // } else {
-      //   button.removeClass("active");
-      // }
+      let difference = 1;
+
+      if(data.following && data.following.includes(userId)) {
+        button.addClass("following");
+        button.text("Following");
+      } else {
+        button.removeClass("following");
+        button.text("Follow");
+        difference = -1;
+      }
+
+      const followersLabel = $("#followersValue");
+      if (followersLabel.length > 0) {
+        const followersText = followersLabel.text();
+        followersLabel.text(Number(followersText) + difference);
+      }
     }
   });
 });
 
 /**STOP BUBBLING WHEN CLICKING ON THE NAMES */
-$(".displayName, .username, #retweetedBy").click(function(event) {
+$(document).on("click", ".displayName, .username, .retweetedBy", function(event) {
   event.stopPropagation();
 });
 
+$(document).on("click", ".closeButton", function() {
+  modalIsVisible = false;
+});

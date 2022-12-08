@@ -21,7 +21,7 @@ router.get("/:username", async (req, res, next) => {
   const payload = await getPayload(req.params.username, req.session.user);
 
   res
-    .set("Content-Security-Policy", "default-src *; style-src 'self' http://* 'unsafe-inline'; script-src 'self' http://* 'unsafe-inline' 'unsafe-eval'")
+    .set("Content-Security-Policy", "default-src *; img-src 'self' data:; style-src 'self' http://* 'unsafe-inline'; script-src 'self' http://* 'unsafe-inline' 'unsafe-eval'")
     .status(200)
     .render("profilePage", payload);
 });
@@ -31,9 +31,29 @@ router.get("/:username/replies", async (req, res, next) => {
   payload.selectedTab = "replies"
 
   res
-    .set("Content-Security-Policy", "default-src *; style-src 'self' http://* 'unsafe-inline'; script-src 'self' http://* 'unsafe-inline' 'unsafe-eval'")
+    .set("Content-Security-Policy", "default-src *; img-src 'self' data:; style-src 'self' http://* 'unsafe-inline'; script-src 'self' http://* 'unsafe-inline' 'unsafe-eval'")
     .status(200)
     .render("profilePage", payload);
+});
+
+router.get("/:username/following", async (req, res, next) => {
+  const payload = await getPayload(req.params.username, req.session.user);
+  payload.selectedTab = "following"
+
+  res
+    .set("Content-Security-Policy", "default-src *; style-src 'self' http://* 'unsafe-inline'; script-src 'self' http://* 'unsafe-inline' 'unsafe-eval'")
+    .status(200)
+    .render("followersAndFollowing", payload);
+});
+
+router.get("/:username/followers", async (req, res, next) => {
+  const payload = await getPayload(req.params.username, req.session.user);
+  payload.selectedTab = "followers"
+
+  res
+    .set("Content-Security-Policy", "default-src *; style-src 'self' http://* 'unsafe-inline'; script-src 'self' http://* 'unsafe-inline' 'unsafe-eval'")
+    .status(200)
+    .render("followersAndFollowing", payload);
 });
 
 async function getPayload (username, userLoggedIn) {

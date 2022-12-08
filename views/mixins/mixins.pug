@@ -1,19 +1,19 @@
 mixin createPostForm(userLoggedIn)
   .postFormContainer
     .userImageContainer
-      img(src=userLoggedIn.profilePic alt=userLoggedIn.userName)
+      img(src=userLoggedIn.profilePic, alt=userLoggedIn.userName)
     .textareaContainer
       textarea#postTextarea(placeholder="What's happening?")
       .buttonsContainer 
         button#submitPostButton(disabled="") Post
 
 mixin createReplyModal(userLoggedIn)
-  #replyModal.modal.fade(tabindex='-1' role='dialog' aria-labelledby='replyModalLabel' aria-hidden='true')
+  #replyModal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='replyModalLabel', aria-hidden='true')
     .modal-dialog(role='document')
       .modal-content
         .modal-header
           h5#replyModalLabel.modal-title Reply
-          button.close(type='button' data-dismiss='modal' aria-label='Close')
+          button.close(type='button', data-dismiss='modal', aria-label='Close')
             span(aria-hidden='true') &times;
         .modal-body
           #originalPostContainer
@@ -23,21 +23,21 @@ mixin createReplyModal(userLoggedIn)
             .textareaContainer
               textarea#replyTextarea(placeholder="What's happening?")
         .modal-footer
-          button.btn.btn-secondary(type='button' data-dismiss='modal') Close
+          button.btn.btn-secondary.closeButton(type='button', data-dismiss='modal') Close
           button#submitReplyButton.btn.btn-primary(type='button', disabled="") Reply
          
 mixin createDeletePostModal()
-  #deletePostModal.modal.fade(tabindex='-1' role='dialog' aria-labelledby='deletePostModal' aria-hidden='true')
+  #deletePostModal.modal.fade(tabindex='-1' role='dialog' aria-labelledby='deletePostModalLabel' aria-hidden='true')
     .modal-dialog(role='document')
       .modal-content
         .modal-header
-          h5#deletePostModal.modal-title Delete the Post
+          h5#deletePostModalLabel.modal-title Delete the Post
           button.close(type='button' data-dismiss='modal' aria-label='Close')
             span(aria-hidden='true') &times;
         .modal-body
          p you won't be able to delete this
         .modal-footer
-          button.btn.btn-secondary(type='button' data-dismiss='modal') Close
+          button.btn.btn-secondary.closeButton(type='button', data-dismiss='modal') Close
           button#deletePostButton.btn.btn-primary(type='button') Delete
 
 mixin createPostModals(userLoggedIn)
@@ -45,11 +45,27 @@ mixin createPostModals(userLoggedIn)
   +createDeletePostModal()
 
 mixin createFollowButton(user, isFollowing)
-  - text = isFollowing ? "Following": "Follow"
-  - buttonClass = isFollowing ? "followButton following": "followButton"
+  -text = isFollowing ? "Following": "Follow"
+  -buttonClass = isFollowing ? "followButton following": "followButton"
   button(class=buttonClass, data-user=user._id) #{text}
 
 mixin createTab(name, href, isSelected)
-  - className = isSelected ? "tab active" : "tab" 
+  -className = isSelected ? "tab active" : "tab" 
   a(href=href, class=className)
     span #{name}
+
+mixin createImageUploadModal()
+  #imageUploadModal.modal.fade(tabindex='-1,' role='dialog', aria-labelledby='imageUploadModalLabel', aria-hidden='true')
+    .modal-dialog(role='document')
+      .modal-content
+        .modal-header
+          h5#imageUploadModalLabel.modal-title Upload a new profile picture
+          button.close(type='button', data-dismiss='modal', aria-label='Close')
+            span(aria-hidden='true') &times;
+        .modal-body
+         input#filePhoto(type="file", name="filePhoto")
+         .imagePreviewContainer
+          img#imagePreview
+        .modal-footer
+          button.btn.btn-secondary.closeButton(type='button', data-dismiss='modal') Cancel
+          button#imageUploadButton.btn.btn-primary(type='button') Save

@@ -34,7 +34,7 @@ function createPostHtml (postData, largeFont = false) {
   if (isRetweet) {
     retweetText = `
       <span>
-        <i class="fas fa-retweet"></i>
+        <i class="fas fa-retweet retweetedBy"></i>
         Retweeted by <a href="/profile/${retweetedBy}">@${retweetedBy}</a>
       </span>`
   }

@@ -1,6 +1,8 @@
 const express = require('express');
 const helmet = require('helmet');
 const session = require('express-session');
+const cors = require('cors');
+const { expressCspHeader, INLINE, NONE, SELF } = require('express-csp-header');
 require('dotenv').config();
 
 require('./database');
@@ -18,6 +20,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 // static file
 app.use(express.static(`${__dirname}/public`));
+app.use(cors());
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: true,
@@ -28,8 +31,14 @@ app.use(helmet());
 app.set("view engine", "pug");
 app.set("views", "views");
 
-// API Routes
+// app.use(expressCspHeader({ 
+//   directives: {
+//     'default-src': [SELF],
+//     'img-src': ['self', 'data:', 'unsafe-inline', 'blob:', 'ws://localhost:*/', 'http://localhost:*/'],
+//   }
+// }));
 
+// API Routes\
 app.get("/", middleware.requireLogin, (req, res, next) => {
   const payload = {
     pageTitle: "Home",
@@ -38,7 +47,7 @@ app.get("/", middleware.requireLogin, (req, res, next) => {
   };
 
   res.status(200)
-    .set("Content-Security-Policy", "default-src *; style-src 'self' http://* 'unsafe-inline'; script-src 'self' http://* 'unsafe-inline' 'unsafe-eval'")
+    .set("Content-Security-Policy", "default-src *; img-src 'self' data:; style-src 'self' http://* 'unsafe-inline'; script-src 'self' http://* 'unsafe-inline' 'unsafe-eval'")
     .render("home", payload);
 });
 app.use("/login", loginRoute);

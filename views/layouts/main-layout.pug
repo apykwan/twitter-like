@@ -5,6 +5,8 @@ html(lang="en")
   head
     meta(charset="UTF-8")
     meta(name="viewport" content="width=device-width, initial-scale=1.0")
+    meta(charset='utf-8' content="font-src 'self' data:; img-src 'self' data:; default-src 'self' http://127.0.0:3003/")
+    link(re='stylesheet', href='https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css')
     link(rel='stylesheet', href='/css/bootstrap/bootstrap.min.css')
     link.css(rel="stylesheet", href="/css/main.css")
     title #{pageTitle} 
@@ -40,6 +42,7 @@ html(lang="en")
     script(src='/js/jquery-3.6.1.min.js')
     script(src='/js/popper-1.16.0.min.js')
     script(src='/js/bootstrap_js/bootstrap.min.js')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js')
 
     block scripts
     script(src="/js/utils.js")
