@@ -85,6 +85,16 @@ $("#deletePostModal").on("show.bs.modal", function(event) {
   modalIsVisible = true;
 });
 
+/** PIN MODAL */
+$("#confirmPinModal").on("show.bs.modal", function(event) {
+  event.stopPropagation();
+  const button = $(event.relatedTarget);
+  const postId = getPostIdFromElement(button);
+  $("#pinPostButton").data("id", postId);
+
+  modalIsVisible = true;
+});
+
 /** DELETE MODAL SUBMIT BUTTON */
 $("#deletePostButton").click(function (event) {
   const postId = $(event.target).data("id");
@@ -95,6 +105,24 @@ $("#deletePostButton").click(function (event) {
     success: function(data, status, xhr) {
       if (xhr.status !== 202) {
         alert("Could not delete post!");
+        return;
+      }
+      location.reload();
+    }
+  });
+});
+
+/** PIN MODAL PIN BUTTON */
+$("#pinPostButton").click(function (event) {
+  const postId = $(event.target).data("id");
+
+  $.ajax({
+    url: `/api/posts/${postId}`,
+    type: "PUT",
+    data: { pinned: true }, 
+    success: function(data, status, xhr) {
+      if (xhr.status !== 204) {
+        alert("Could not pin post!");
         return;
       }
       location.reload();
@@ -287,7 +315,7 @@ $(document).on("click", ".followButton", function(event) {
 });
 
 /**STOP BUBBLING WHEN CLICKING ON THE NAMES */
-$(document).on("click", ".displayName, .username, .retweetedBy", function(event) {
+$(document).on("click", ".displayName, .username, .retweetedBy, #confirmPinModal", function(event) {
   event.stopPropagation();
 });
 

@@ -57,8 +57,15 @@ function createPostHtml (postData, largeFont = false) {
   } 
 
   let buttons = "";
+  let pinnedPostText;
   if (postData.postedBy._id == userLoggedIn._id) {
+    const pinnedClass = postData.pinned ? "active" : "";
+    pinnedPostText = postData.pinned ? '<i class="fas fa-thumbtack"> <span>Pinned post</span></i>' : '';
+    
     buttons = `
+      <button class="pinButton ${pinnedClass}" data-id="${postData._id}" data-toggle="modal" data-target="#confirmPinModal">
+        <i class="fas fa-thumbtack"></i>
+      </button>
       <button data-id="${postData._id}" data-toggle="modal" data-target="#deletePostModal">
         <i class="fas fa-times"></i>
       </button>
@@ -75,6 +82,7 @@ function createPostHtml (postData, largeFont = false) {
           <img src="${postedBy.profilePic}" alt="${postedBy.userName}'s profile picture"/>
         </div>
         <div class="postContentContainer">
+          <div class="pinnedPostText">${pinnedPostText}</div>
           <div class="header">
             <a class="displayName" href="/profile/${postedBy.userName}">${displayName}</a>
             <span class="username">@${postedBy.userName}</span>

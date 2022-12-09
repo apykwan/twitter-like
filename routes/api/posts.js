@@ -113,20 +113,19 @@ router.put("/:id/like", async (req, res, next) => {
   }
 });
 
-/**PUT Retweet button */
+/**POST Retweet button */
 router.post("/:id/retweet", async (req, res, next) => {
   if (!req.session.user) return;
   const postId = req.params.id;
   const userId = req.session.user._id;
 
   try {
-    // Try and delete retreet
+    // toggle between tweeted and untweeted
     const deletedPost = await Post.findOneAndDelete({ 
       postedBy: userId, 
       retweetData: postId 
     });
     
-    // toggle between like and dislike
     const option = deletedPost != null ? "$pull" : "$addToSet";
 
     let repost = deletedPost;
@@ -163,6 +162,21 @@ router.delete(`/:id`, async (req, res, next) => {
     await Post.findByIdAndDelete(req.params.id);
 
     res.sendStatus(202);
+  } catch (err) {
+    console.log(err);
+    res.sendStatus(400);
+  }
+});
+
+/**PUT pin the post */
+router.put(`/:id`, async (req, res, next) => {
+  try {
+    if (req.body.pinned !== undefined) {
+      await Post.updateMany({ postedBy: req.session.user }, { pinned: false });
+    }
+
+    await Post.findByIdAndUpdate(req.params.id, { pinned: req.body.pinned });
+    res.sendStatus(204);
   } catch (err) {
     console.log(err);
     res.sendStatus(400);

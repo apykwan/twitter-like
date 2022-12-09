@@ -74,6 +74,7 @@ router.get("/:userId/followers", async (req, res, next) => {
   }
 });
 
+// POST adding user's profile picture
 router.post("/profilePicture", upload.single("croppedImage"), async (req, res, next) => {
   if (!req.file) {
     console.log("No file uploaded with ajax request");
@@ -91,8 +92,8 @@ router.post("/profilePicture", upload.single("croppedImage"), async (req, res, n
     }
     try {
       req.session.user = await User.findByIdAndUpdate(req.session.user._id, {
-        coverPhoto: filePath
-      }, { new: true })
+        profilePic: filePath
+      }, { new: true });
 
       res.sendStatus(204);
     } catch (error) {
@@ -101,6 +102,7 @@ router.post("/profilePicture", upload.single("croppedImage"), async (req, res, n
   });
 });
 
+// POST adding user's cover picture
 router.post("/coverPhoto", upload.single("croppedImage"), async (req, res, next) => {
   if (!req.file) {
     console.log("No file uploaded with ajax request");
