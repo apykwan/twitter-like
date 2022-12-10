@@ -5,11 +5,33 @@ const path = require('path');
 
 const Post = require('../../schemas/Post');
 const User = require('../../schemas/User');
+const { find } = require('../../schemas/Post');
 
 const router = express.Router();
 const upload = multer({
   dest: "uploads/"
-})
+});
+
+router.get("/", async (req, res, next) => {
+  let searchObj = req.query;
+  if (req.query.search !== undefined) {
+    searchObj = {
+      $or: [
+        { firstName: { $regex: req.query.search, $options: "i" }}, 
+        { lastName: { $regex: req.query.search, $options: "i" }}, 
+        { userName: { $regex: req.query.search, $options: "i" }}, 
+      ]
+    };
+  }
+  
+  try {
+    const results = await User.find(searchObj);
+    res.status(200).send(results);
+  } catch (error) {
+    console.log(error);
+    res.sendStatus(400);
+  }
+});
 
 router.put("/:userId/follow", async (req, res, next) => {
   const userId = req.params.userId;

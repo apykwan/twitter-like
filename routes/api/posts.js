@@ -15,8 +15,13 @@ router.get("/", async (req, res, next) => {
     delete searchObj.isReply;
   }
 
+  if(searchObj.search !== undefined) {
+    searchObj.content = { $regex: searchObj.search, $options: "i" };
+    delete searchObj.search;
+  }
+
   // Only fetch the following user and self posts
-  if (searchObj.followingOnly !== undefined) {
+  if(searchObj.followingOnly !== undefined) {
     const followingOnly = searchObj.followingOnly == "true";
 
     if (followingOnly) {
