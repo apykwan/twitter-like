@@ -60,10 +60,11 @@ function createPostHtml (postData, largeFont = false) {
   let pinnedPostText;
   if (postData.postedBy._id == userLoggedIn._id) {
     const pinnedClass = postData.pinned ? "active" : "";
+    const dataTarget = postData.pinned ? "#unpinModal" : "#confirmPinModal";
     pinnedPostText = postData.pinned ? '<i class="fas fa-thumbtack"> <span>Pinned post</span></i>' : '';
-    
+
     buttons = `
-      <button class="pinButton ${pinnedClass}" data-id="${postData._id}" data-toggle="modal" data-target="#confirmPinModal">
+      <button class="pinButton ${pinnedClass}" data-id="${postData._id}" data-toggle="modal" data-target="${dataTarget}">
         <i class="fas fa-thumbtack"></i>
       </button>
       <button data-id="${postData._id}" data-toggle="modal" data-target="#deletePostModal">
@@ -191,4 +192,18 @@ function outputPostsWithReplies(results, container) {
   if (results.length == 0) {
     container.append("<span>Nothing to show.</span>")
   }
+}
+
+/**Append pinned posts to the container */
+function outputPinnedPost(results, container) {
+  if(results.length === 0) {
+    container.hide();
+    return;
+  }
+  container.html("");
+
+  results.forEach(result => {
+    const html = createPostHtml(result);
+    container.append(html);
+  });
 }

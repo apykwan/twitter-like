@@ -1,5 +1,5 @@
 node_modules/*
 old/*
 .env
-uploads/images/
+uploads/images/*
 !uploads/images/.gitkeep

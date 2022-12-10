@@ -95,6 +95,16 @@ $("#confirmPinModal").on("show.bs.modal", function(event) {
   modalIsVisible = true;
 });
 
+/** UNPIN MODAL */
+$("#unpinModal").on("show.bs.modal", function(event) {
+  event.stopPropagation();
+  const button = $(event.relatedTarget);
+  const postId = getPostIdFromElement(button);
+  $("#unpinPostButton").data("id", postId);
+
+  modalIsVisible = true;
+});
+
 /** DELETE MODAL SUBMIT BUTTON */
 $("#deletePostButton").click(function (event) {
   const postId = $(event.target).data("id");
@@ -120,6 +130,24 @@ $("#pinPostButton").click(function (event) {
     url: `/api/posts/${postId}`,
     type: "PUT",
     data: { pinned: true }, 
+    success: function(data, status, xhr) {
+      if (xhr.status !== 204) {
+        alert("Could not pin post!");
+        return;
+      }
+      location.reload();
+    }
+  });
+});
+
+/** UNPIN MODAL UNPIN BUTTON */
+$("#unpinPostButton").click(function (event) {
+  const postId = $(event.target).data("id");
+
+  $.ajax({
+    url: `/api/posts/${postId}`,
+    type: "PUT",
+    data: { pinned: false }, 
     success: function(data, status, xhr) {
       if (xhr.status !== 204) {
         alert("Could not pin post!");

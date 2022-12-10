@@ -7,6 +7,10 @@ $(document).ready(function() {
 });
 
 function loadPosts() {
+  $.get("/api/posts", { postedBy: profileUserId, pinned: true }, function(results) {
+    outputPinnedPost(results, $(".pinnedPostContainer"));
+  });
+
   $.get("/api/posts", { postedBy: profileUserId, isReply: false }, function(results) {
     outputPosts(results, $(".postsContainer"));
   });
