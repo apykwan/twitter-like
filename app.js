@@ -9,12 +9,14 @@ const middleware = require('./middleware');
 const loginRoute = require('./routes/loginRoutes');
 const registerRoute = require('./routes/registerRoutes');
 const logoutRoute = require('./routes/logout');
-const postsApiRoutes = require('./routes/api/posts');
-const usersApiRoutes = require('./routes/api/users');
 const profileRoutes = require('./routes/profileRoutes');
 const postRoutes = require('./routes/postRoutes');
 const uploadRoutes = require('./routes/uploadRoutes');
 const searchRoutes = require('./routes/searchRoutes');
+const messagesRoute = require('./routes/messagesRoutes');
+const postsApiRoutes = require('./routes/api/posts');
+const usersApiRoutes = require('./routes/api/users');
+const chatsApiRoutes = require('./routes/api/chats');
 
 const app = express();
 app.use(express.json());
@@ -51,9 +53,10 @@ app.use("/posts", middleware.requireLogin, postRoutes);
 app.use("/profile", middleware.requireLogin, profileRoutes);
 app.use("/uploads", uploadRoutes);
 app.use("/search", middleware.requireLogin, searchRoutes);
+app.use("/messages", middleware.requireLogin, messagesRoute);
 app.use("/api/posts", postsApiRoutes);
 app.use("/api/users", usersApiRoutes);
-
+app.use("/api/chats", chatsApiRoutes);
 
 const port = process.env.PORT || 5000;
 const server = app.listen(port, () => {

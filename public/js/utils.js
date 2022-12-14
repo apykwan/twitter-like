@@ -253,3 +253,50 @@ function createUserHtml(userData, showFollowButton) {
     </div>
   `;
 }
+
+function searchUsers(searchTerm) {
+  $.get("/api/users", { search: searchTerm }, function(results) {
+    outputSelectableUsers(results, $(".resultsContainer"));
+  });
+}
+
+function outputSelectableUsers(results, container) {
+  container.html("");
+
+  results.forEach(function(result) {
+    // Ensure self and selected users will not be shown 
+    if(result._id == userLoggedIn._id || selectedUsers.some(user => user._id === result._id)) return;
+
+    const html = createUserHtml(result, false);
+    const element = $(html);
+    element.click(function() {
+      userSelected(result);
+    });
+
+    container.append(element);
+  });
+
+  if (results.length === 0) {
+    container.append(`<span class="noResults">No result found!</span>`);
+  }
+}
+
+function userSelected(user) {
+  selectedUsers.push(user);
+  updateSelectedUsersHtml();
+  $("#userSearchTextbox").val("").focus();
+  $(".resultsContainer").html("");
+  $("#createChatButton").prop("disabled", false);
+}
+
+function updateSelectedUsersHtml() {
+  const elements = [];
+  selectedUsers.forEach(function(user) {
+    const { firstName, lastName } = user;
+    const userElement = $(`<span class="selectedUser">${firstName} ${lastName}</span>`);
+    elements.push(userElement);
+  });
+
+  $(".selectedUser").remove();
+  $("#selectedUsers").prepend(elements);
+}

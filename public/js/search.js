@@ -1,5 +1,4 @@
-let timer;
-
+// time variable in common.js
 $("#searchBox").keydown(function(event) {
   clearTimeout(timer);
   const textbox = $(event.target);

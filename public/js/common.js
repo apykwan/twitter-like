@@ -1,6 +1,6 @@
 /**GLOBAL VARIABLES */
-let modalIsVisible;
-let cropper;
+let modalIsVisible, cropper, timer;
+const selectedUsers = [];
 
 /**POST SUBMIT BUTTON - ENABLING OR DISABLING */
 $("#postTextarea, #replyTextarea").keyup(function (event) {
@@ -202,6 +202,47 @@ $("#imageUploadButton").click(() => {
         location.reload();
       }
     })
+  });
+});
+
+/**NEW MESSAGE USER SEARCH BOX */
+$("#userSearchTextbox").keydown(function(event) {
+  clearTimeout(timer);
+  const textbox = $(event.target);
+  let value = textbox.val();
+
+  if(value == "" && (event.which == 8 || event.keyCode == 8)) {
+    // remove user from selection
+    selectedUsers.pop();
+    updateSelectedUsersHtml();
+    $(".resultsContainer").html("");
+
+    if (selectedUsers.length === 0) {
+      $("#createChatButton").prop("disabled", true);
+    }
+
+    return;
+  }
+
+  timer = setTimeout(function() {
+    value = textbox.val().trim();
+
+    if (value == "") {
+      $(".resultsContainer").html("");
+    } else {
+      searchUsers(value);
+    }
+  }, 1000);
+});
+
+/**CREATE CHAT BUTTON */
+$('#createChatButton').click(function() {
+  const data = JSON.stringify(selectedUsers);
+
+  $.post("/api/chats", { users: data }, function(chat) {
+    if (!chat || !chat._id) alert("Invalid reponse from server.");
+
+    window.location.href = `/messages/${chat._id}`;
   });
 });
 
