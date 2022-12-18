@@ -57,7 +57,7 @@ function createPostHtml (postData, largeFont = false) {
   } 
 
   let buttons = "";
-  let pinnedPostText;
+  let pinnedPostText = "";
   if (postData.postedBy._id == userLoggedIn._id) {
     const pinnedClass = postData.pinned ? "active" : "";
     const dataTarget = postData.pinned ? "#unpinModal" : "#confirmPinModal";

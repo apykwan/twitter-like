@@ -6,7 +6,11 @@ const ChatSchema = new Schema({
   users: [{
     type: Schema.Types.ObjectId,
     ref: 'User'
-  }]
+  }],
+  latestMessage: {
+    type: Schema.Types.ObjectId,
+    ref: 'User'
+  }
 }, {
   timestamps: true
 });
