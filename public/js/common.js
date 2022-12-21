@@ -391,3 +391,25 @@ $(document).on("click", ".displayName, .username, .retweetedBy, #confirmPinModal
 $(document).on("click", ".closeButton", function() {
   modalIsVisible = false;
 });
+
+/**FOR CHATROOM NAMES */
+function getChatName(chatData) {
+  let chatName = chatData.chatName;
+
+  if(!chatName) {
+    const otherChatUsers = getOtherChatUsers(chatData.users);
+    const namesArray = otherChatUsers.map(function(user) {
+      return `${user.firstName} ${user.lastName}`;
+    });
+    chatName = namesArray.join(", ");
+  }
+
+  return chatName;
+}
+
+function getOtherChatUsers(users) {
+  if(users.length == 1) return users;
+
+  // return users array without self
+  return users.filter(user => user._id !== userLoggedIn._id);
+}

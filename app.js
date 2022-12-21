@@ -17,6 +17,7 @@ const messagesRoute = require('./routes/messagesRoutes');
 const postsApiRoutes = require('./routes/api/posts');
 const usersApiRoutes = require('./routes/api/users');
 const chatsApiRoutes = require('./routes/api/chats');
+const messagesApiRoutes = require('./routes/api/messages');
 
 const app = express();
 app.use(express.json());
@@ -57,6 +58,7 @@ app.use("/messages", middleware.requireLogin, messagesRoute);
 app.use("/api/posts", postsApiRoutes);
 app.use("/api/users", usersApiRoutes);
 app.use("/api/chats", chatsApiRoutes);
+app.use("/api/messages", messagesApiRoutes);
 
 const port = process.env.PORT || 5000;
 const server = app.listen(port, () => {

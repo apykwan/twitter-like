@@ -1,6 +1,6 @@
 const express = require('express');
 
-const Post = require('../../schemas/Post');
+const Message = require('../../schemas/Message');
 const User = require('../../schemas/User');
 const Chat = require('../../schemas/Chat');
 
@@ -38,10 +38,53 @@ router.post("/", async (req, res, next) => {
 
 router.get("/", async (req, res, next) => { 
   try {
-    const results = await Chat
+    let results = await Chat
       .find({ users: { $elemMatch: { $eq: req.session.user._id }}})
-      .sort({ updatedAt: -1 })
+      .populate("users")
+      .populate("latestMessage")
+      .sort({ updatedAt: -1 });
+
+    results = await User.populate(results, { path: "latestMessage.sender" });
+      
+    res.status(200).send(results);
+  } catch (error) {
+    console.log(error);
+    res.sendStatus(400);
+  }
+});
+
+router.get("/:chatId", async (req, res, next) => { 
+  try {
+    const results = await Chat
+      .findOne({
+        _id: req.params.chatId, 
+        users: { $elemMatch: { $eq: req.session.user._id }}
+      })
       .populate("users");
+      
+    res.status(200).send(results);
+  } catch (error) {
+    console.log(error);
+    res.sendStatus(400);
+  }
+});
+
+router.put("/:chatid", async (req, res, next) => { 
+  try {
+    await Chat.findByIdAndUpdate(req.params.chatid, { chatName: req.body.chatName });
+
+    res.sendStatus(204);
+  } catch (error) {
+    console.log(error);
+    res.sendStatus(400);
+  }
+});
+
+router.get("/:chatId/messages", async (req, res, next) => { 
+  try {
+    const results = await Message
+      .find({ chat: req.params.chatId})
+      .populate("sender");
       
     res.status(200).send(results);
   } catch (error) {

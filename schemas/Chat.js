@@ -9,7 +9,7 @@ const ChatSchema = new Schema({
   }],
   latestMessage: {
     type: Schema.Types.ObjectId,
-    ref: 'User'
+    ref: 'Message'
   }
 }, {
   timestamps: true
