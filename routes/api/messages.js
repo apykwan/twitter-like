@@ -2,6 +2,7 @@ const express = require('express');
 
 const Message = require('../../schemas/Message');
 const Chat = require('../../schemas/Chat');
+const User = require('../../schemas/User');
 
 const router = express.Router();
 
@@ -21,6 +22,7 @@ router.post("/", async (req, res, next) => {
     let message = await Message.create(newMessage);
     message = await message.populate('sender');
     message = await message.populate('chat');
+    message = await User.populate(message, { path: "chat.users" });
 
     await Chat.findByIdAndUpdate(req.body.chatId, { latestMessage: message });
     

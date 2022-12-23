@@ -1,4 +1,5 @@
 const express = require('express');
+let io = require('socket.io');
 const helmet = require('helmet');
 const session = require('express-session');
 const cors = require('cors');
@@ -18,6 +19,7 @@ const postsApiRoutes = require('./routes/api/posts');
 const usersApiRoutes = require('./routes/api/users');
 const chatsApiRoutes = require('./routes/api/chats');
 const messagesApiRoutes = require('./routes/api/messages');
+const notificationRoutes = require('./routes/notificationRoutes');
 
 const app = express();
 app.use(express.json());
@@ -55,6 +57,7 @@ app.use("/profile", middleware.requireLogin, profileRoutes);
 app.use("/uploads", uploadRoutes);
 app.use("/search", middleware.requireLogin, searchRoutes);
 app.use("/messages", middleware.requireLogin, messagesRoute);
+app.use("/notifications", middleware.requireLogin, notificationRoutes);
 app.use("/api/posts", postsApiRoutes);
 app.use("/api/users", usersApiRoutes);
 app.use("/api/chats", chatsApiRoutes);
@@ -63,6 +66,30 @@ app.use("/api/messages", messagesApiRoutes);
 const port = process.env.PORT || 5000;
 const server = app.listen(port, () => {
   console.log(`Server is running on port ${port}`)
+});
+io = io(server, { pingTimeout: 60000 });
+
+io.on("connection", socket => {
+  socket.on("setup", userData => {
+   socket.join(userData._id);
+   socket.emit("connected");
+  });
+
+  socket.on("join room", room => socket.join(room));
+  socket.on("typing", room =>  socket.in(room).emit("typing"));
+  socket.on("stop typing", room => socket.in(room).emit("stop typing"));
+
+  socket.on("new message", newMessage => {
+    const chat = newMessage.chat;
+
+    if(!chat.users) return console.log("chat.users not defined");
+
+    chat.users.forEach(user => {
+      if (user._id === newMessage.sender._id) return;
+
+      socket.in(user._id).emit("message received", newMessage);
+    });
+  });
 });
 
 process.on('uncaughtException', err => {

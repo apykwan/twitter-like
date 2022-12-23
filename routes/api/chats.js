@@ -93,5 +93,4 @@ router.get("/:chatId/messages", async (req, res, next) => {
   }
 });
 
-
 module.exports = router;

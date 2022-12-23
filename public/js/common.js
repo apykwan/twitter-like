@@ -413,3 +413,13 @@ function getOtherChatUsers(users) {
   // return users array without self
   return users.filter(user => user._id !== userLoggedIn._id);
 }
+
+/** RECEIVING MESSAGE FROM OTHER UERS */
+function messageReceived(newMessage) {
+  if($(".chatContainer").length == 0) {
+    // Show popup notification
+
+  } else {
+    addChatMessageHtml(newMessage)
+  }
+}
