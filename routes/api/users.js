@@ -3,9 +3,8 @@ const multer = require('multer');
 const fs = require('fs');
 const path = require('path');
 
-const Post = require('../../schemas/Post');
+const Notification = require('../../schemas/Notification');
 const User = require('../../schemas/User');
-const { find } = require('../../schemas/Post');
 
 const router = express.Router();
 const upload = multer({
@@ -57,6 +56,10 @@ router.put("/:userId/follow", async (req, res, next) => {
       { [option]: { followers: req.session.user._id } }, 
       { new: true }
     );
+
+    if(!isFollowing) {
+      await Notification.insertNotification(userId, req.session.user._id, "follow", req.session.user._id);
+    }
 
     res.status(200).send(req.session.user); 
   } catch (error) {

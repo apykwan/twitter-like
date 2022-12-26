@@ -15,11 +15,12 @@ const postRoutes = require('./routes/postRoutes');
 const uploadRoutes = require('./routes/uploadRoutes');
 const searchRoutes = require('./routes/searchRoutes');
 const messagesRoute = require('./routes/messagesRoutes');
+const notificationRoutes = require('./routes/notificationRoutes');
 const postsApiRoutes = require('./routes/api/posts');
 const usersApiRoutes = require('./routes/api/users');
 const chatsApiRoutes = require('./routes/api/chats');
 const messagesApiRoutes = require('./routes/api/messages');
-const notificationRoutes = require('./routes/notificationRoutes');
+const notificationApiRoutes = require('./routes/api/notifications');
 
 const app = express();
 app.use(express.json());
@@ -62,6 +63,7 @@ app.use("/api/posts", postsApiRoutes);
 app.use("/api/users", usersApiRoutes);
 app.use("/api/chats", chatsApiRoutes);
 app.use("/api/messages", messagesApiRoutes);
+app.use("/api/notifications", notificationApiRoutes);
 
 const port = process.env.PORT || 5000;
 const server = app.listen(port, () => {

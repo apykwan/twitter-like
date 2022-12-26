@@ -383,13 +383,19 @@ $(document).on("click", ".followButton", function(event) {
   });
 });
 
-/**STOP BUBBLING WHEN CLICKING ON THE NAMES */
-$(document).on("click", ".displayName, .username, .retweetedBy, #confirmPinModal", function(event) {
-  event.stopPropagation();
-});
+/**NOTIFICATION OPENED */
+$(document).on("click", ".notification.active", function(e) {
+  const container = $(e.currentTarget);
+  const notificationId = container.data().id;
 
-$(document).on("click", ".closeButton", function() {
-  modalIsVisible = false;
+  const href = container.attr("href");
+  e.preventDefault();
+
+  const callback = function() {
+    window.location = href;
+  };
+
+  markNotificationsAsOpened(notificationId, callback);
 });
 
 /**FOR CHATROOM NAMES */
@@ -423,3 +429,31 @@ function messageReceived(newMessage) {
     addChatMessageHtml(newMessage)
   }
 }
+
+function markNotificationsAsOpened(notificationId = null, callback = null) {
+  if(callback == null) callback = () => location.reload();
+
+  let apiUrl = notificationId !== null 
+    ?  `/api/notifications/${notificationId}/markAsOpened`
+    : `/api/notifications/markAsOpened`;
+
+  console.log(apiUrl);
+  $.ajax({
+    url: apiUrl,
+    type: "PUT",
+    success: function() {
+      console.log("opened")
+      callback();
+    }
+  });
+}
+
+/**STOP BUBBLING WHEN CLICKING ON THE NAMES */
+$(document).on("click", ".displayName, .username, .retweetedBy, #confirmPinModal", function(event) {
+  event.stopPropagation();
+});
+
+$(document).on("click", ".closeButton", function() {
+  modalIsVisible = false;
+});
+
