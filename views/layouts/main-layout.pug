@@ -24,8 +24,10 @@ html(lang="en")
             i.fas.fa-search
           a(href="/notifications")
             i.fas.fa-bell
+            span#notificationBadge 8
           a(href="/messages")
             i.fas.fa-envelope
+            span#messageBadge 8
           a(href=`/profile/${userLoggedIn && userLoggedIn.userName}`)
             i.fas.fa-user
           a(href="/logout")
@@ -39,6 +41,7 @@ html(lang="en")
           
         .d-none.d-md-block.col-md-2.col-lg-4
           span third column
+    #notificationList
     
     script(src='/fontawesome-6.2.1/js/all.min.js')
     script(src='/js/jquery-3.6.1.min.js')

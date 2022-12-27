@@ -2,6 +2,12 @@
 let modalIsVisible, cropper, timer;
 const selectedUsers = [];
 
+/**LAUNCH AT START */
+$(document).ready(function() {
+  refreshMessagesBadge();
+  refreshNotificationBadge();
+});
+
 /**POST SUBMIT BUTTON - ENABLING OR DISABLING */
 $("#postTextarea, #replyTextarea").keyup(function (event) {
   const textbox = $(event.target);
@@ -41,6 +47,7 @@ $("#submitPostButton, #submitReplyButton").click(function (event) {
 
   $.post("/api/posts", data, function(postData) {
     if (postData.replyTo) {
+      emitNotification(postData.replyTo.postedBy);
       location.reload();
     } else {
       const html = createPostHtml(postData);
@@ -309,6 +316,7 @@ $(document).on('click', '.likeButton', function(event) {
 
       if(postData.likes.includes(userLoggedIn._id)) {
         button.addClass("active");
+        emitNotification(postData.postedBy);
       } else {
         button.removeClass("active");
       }
@@ -332,6 +340,7 @@ $(document).on('click', '.retweetButton', function(event) {
 
       if(postData.retweetUsers.includes(userLoggedIn._id)) {
         button.addClass("active");
+        emitNotification(postData.postedBy);
       } else {
         button.removeClass("active");
       }
@@ -368,6 +377,7 @@ $(document).on("click", ".followButton", function(event) {
       if(data.following && data.following.includes(userId)) {
         button.addClass("following");
         button.text("Following");
+        emitNotification(userId);
       } else {
         button.removeClass("following");
         button.text("Follow");
@@ -437,7 +447,7 @@ function markNotificationsAsOpened(notificationId = null, callback = null) {
     ?  `/api/notifications/${notificationId}/markAsOpened`
     : `/api/notifications/markAsOpened`;
 
-  console.log(apiUrl);
+  
   $.ajax({
     url: apiUrl,
     type: "PUT",
@@ -448,6 +458,105 @@ function markNotificationsAsOpened(notificationId = null, callback = null) {
   });
 }
 
+/**NUMBER OF INBOX MESSAGES */
+function refreshMessagesBadge() {
+  $.get("/api/chats", { unreadOnly: true }, function(data) {
+    const numResults = data.length;
+
+    if(numResults > 0) {
+      $("#messageBadge").text(numResults).addClass("active");
+    } else {
+      $("#messageBadge").text("").removeClass("active");
+    }
+  });
+}
+
+function refreshNotificationBadge() {
+  $.get("/api/notifications", { unreadOnly: true }, function(data) {
+    const numResults = data.length;
+
+    if(numResults > 0) {
+      $("#notificationBadge").text(numResults).addClass("active");
+    } else {
+      $("#notificationBadge").text("").removeClass("active");
+    }
+  });
+}
+
+function showNotificationPopup(data) {
+  const html = createNotificationHtml(data);
+  const element = $(html);
+  element
+    .hide()
+    .prependTo("#notificationList")
+    .slideDown("fast");
+
+  setTimeout(function() {
+    element.fadeOut(400);
+  }, 5000);
+}
+
+function createNotificationHtml(notification) {
+  if (!notification) return;
+
+  const text = getNotificationText(notification);
+  const href = getNotificationUrl(notification);
+  const className = notification.opened ? "" : "active";
+
+  return `
+    <a href='${href}' class='resultListItem notification ${className}' data-id='${notification._id}'>
+      <div class="resultsImageContainer">
+        <img src="${notification.userFrom.profilePic}" alt="User profile picture" />
+      </div>
+      <div class="resultsDetailsContainer ellipsis">
+        <span class="ellipsis">${text}</span>
+      </div>
+    </a>
+  `;
+}
+
+function getNotificationText(notification) {
+  const { userFrom, notificationType } = notification;
+  if(!userFrom) return alert("user from data not populated");
+
+  const userFromName = `${userFrom.firstName} ${userFrom.lastName}`;
+
+  let text;
+  switch(notificationType) {
+    case "retweet":
+      text = `${userFromName} retweeted one of your posts`;
+      break;
+    case "postLike":
+      text = `${userFromName} liked one of your posts`;
+      break;
+    case "reply":
+      text = `${userFromName} replied to one of your posts`;
+      break;
+    case "follow":
+      text = `${userFromName} followed you`;
+      break;
+    default:
+      text = "Something went wrong!!!";
+  }
+
+  return `<span class="ellisis">${text}</span>`;
+}
+
+function getNotificationUrl(notification) {
+  const { notificationType, entityId } = notification;
+
+  switch(notificationType) {
+    case "retweet":
+    case "postLike":
+    case "reply":
+      return `/posts/${entityId}`;
+    case "follow":
+      return `/profile/${entityId}`;
+    default:
+      return "#";
+  }
+}
+
 /**STOP BUBBLING WHEN CLICKING ON THE NAMES */
 $(document).on("click", ".displayName, .username, .retweetedBy, #confirmPinModal", function(event) {
   event.stopPropagation();
@@ -456,4 +565,3 @@ $(document).on("click", ".displayName, .username, .retweetedBy, #confirmPinModal
 $(document).on("click", ".closeButton", function() {
   modalIsVisible = false;
 });
-

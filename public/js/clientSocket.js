@@ -11,3 +11,16 @@ socket.on("connected", function() {
 socket.on("message received", function(newMessage) {
   messageReceived(newMessage);
 });
+
+socket.on("notification received", function() {
+  $.get("/api/notifications/latest", function(notificationData) {
+    showNotificationPopup(notificationData);
+    refreshNotificationBadge();
+  });
+});
+
+function emitNotification(userId) {
+  if(userId == userLoggedIn._id) return;
+
+  socket.emit("notification received", userId);
+}

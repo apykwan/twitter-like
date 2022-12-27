@@ -19,9 +19,7 @@ function createPostHtml (postData, largeFont = false) {
 
   const postedBy = postData.postedBy;
   
-  if(postedBy._id === undefined) {
-    return console.log("User object not populated");
-  }
+  if(!postedBy || postedBy._id === undefined) return;
 
   const displayName = `${postedBy.firstName} ${postedBy.lastName}`;
   const timestamp = timeDifference(new Date(), new Date(postData.createdAt));
@@ -36,7 +34,8 @@ function createPostHtml (postData, largeFont = false) {
       <span>
         <i class="fas fa-retweet retweetedBy"></i>
         Retweeted by <a href="/profile/${retweetedBy}">@${retweetedBy}</a>
-      </span>`
+      </span>
+    `;
   }
 
   let replyFlag = "";
