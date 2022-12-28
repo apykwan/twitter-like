@@ -432,9 +432,9 @@ function getOtherChatUsers(users) {
 
 /** RECEIVING MESSAGE FROM OTHER UERS */
 function messageReceived(newMessage) {
-  if($(".chatContainer").length == 0) {
+  if($(`[data-room="${newMessage.chat._id}"]`).length == 0) {
     // Show popup notification
-
+    showMessagePopup(newMessage);
   } else {
     addChatMessageHtml(newMessage)
   }
@@ -447,7 +447,6 @@ function markNotificationsAsOpened(notificationId = null, callback = null) {
     ?  `/api/notifications/${notificationId}/markAsOpened`
     : `/api/notifications/markAsOpened`;
 
-  
   $.ajax({
     url: apiUrl,
     type: "PUT",
@@ -485,6 +484,21 @@ function refreshNotificationBadge() {
 
 function showNotificationPopup(data) {
   const html = createNotificationHtml(data);
+  const element = $(html);
+  element
+    .hide()
+    .prependTo("#notificationList")
+    .slideDown("fast");
+
+  setTimeout(function() {
+    element.fadeOut(400);
+  }, 5000);
+}
+
+function showMessagePopup(data) {
+  if(!data.chat.latestMessage._id) data.chat.latestMessage = data;
+
+  const html = createChatHtml(data.chat);
   const element = $(html);
   element
     .hide()
@@ -555,6 +569,57 @@ function getNotificationUrl(notification) {
     default:
       return "#";
   }
+}
+
+function createChatHtml(chatData) {
+  let chatName = getChatName(chatData);
+  let image = getChatImageElements(chatData);
+  let latestMessage = getLatestMessage(chatData.latestMessage);
+
+  // Inactive any brand new chat and read chats
+  let activeClass = !chatData.latestMessage || chatData.latestMessage.readBy.includes(userLoggedIn._id) ? "" : "active";
+
+  return `
+    <a href="/messages/${chatData._id}" class="resultListItem ${activeClass}">
+      ${image}
+      <div class="resultsDetailsContainer ellipsis">
+        <span class="heading ellipsis">${chatName}</span>
+        <span class="subText ellipsis">${latestMessage}</span>
+      </div>
+    </a>
+  `;
+}
+
+function getLatestMessage(getLatestMessage) {
+  if(getLatestMessage != null) {
+    const sender = getLatestMessage.sender;
+    return `${sender.firstName} ${sender.lastName}: ${getLatestMessage.content}`;
+  }
+  return "New Chat";
+}
+
+function getChatImageElements(chatData) {
+  const otherChatUsers = getOtherChatUsers(chatData.users);
+
+  let groupChatClass = "";
+  let chatImage = getUserChatImageElment(otherChatUsers[0]);
+
+  if(otherChatUsers.length > 1) {
+    groupChatClass = "groupChatImage";
+    chatImage += getUserChatImageElment(otherChatUsers[1])
+  }
+
+  return `
+    <div class="resultsImageContainer ${groupChatClass}">${chatImage}</div>
+  `;
+}
+
+function getUserChatImageElment(user) {
+  if(!user || !user.profilePic) {
+    return alert("User passed into function invalid");
+  }
+
+  return `<img src="${user.profilePic}" alt="User's profile pic">`;
 }
 
 /**STOP BUBBLING WHEN CLICKING ON THE NAMES */

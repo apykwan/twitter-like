@@ -24,6 +24,7 @@ $(document).ready(function() {
 
     addMessagesHtmlToPage(messages.join(""));
     scrollToBottom(false);
+    markAllMessagesAsRead();
 
     // remove the loading spinner
     $(".loadingSpinnerContainer").remove();
@@ -183,4 +184,14 @@ function scrollToBottom(animated) {
   } else {
     container.scrollTop(scrollHeight);
   }
+}
+
+function markAllMessagesAsRead() {
+  $.ajax({
+    url: `/api/chats/${chatId}/messages/markAsRead`,
+    type: "PUT",
+    success: function() {
+      refreshMessagesBadge();
+    }
+  })
 }
